@@ -49,28 +49,37 @@ def solve():
     n = 5525190662051722389398876030739412137775938774790992602567049718278780220882647212045017447852382983250859977157638406889457452433877216946759540980558617
     hint = 163390612248405216952422980053072618261066844986739856118768985945155558215222184475851962909161628806655516868219220339423593381547066084266538543418276501410521426782956172908562676847833099242113566651238300013430118494859297562
 
+    e_hint = e * hint
+    ne2 = n * e * e
+
     for k in range(1, e):
-        A = k*n + k + 1
-        B = k*n + e*hint
-        C = n*e*e
+        coeff_q2 = k*n + k + 1
+        coeff_q1 = k*n + e_hint
         
-        delta = B**2 - 4*A*C
+        delta = coeff_q1**2 - 4 * coeff_q2 * ne2
         if delta < 0: continue
-        q_start = (B + math.isqrt(delta)) // (2*A)
-
-        q = q_start
-        for _ in range(10):
-            f_q = k*q**3 - A*q**2 + B*q - C
-            f_prime_q = 3*k*q**2 - 2*A*q + B
-            if f_prime_q == 0: break
-            q -= f_q // f_prime_q
         
-        if q > 1 and n % q == 0:
-            p = n // q
-            d = pow(e, -1, (p-1)*(q-1))
-            m = pow(c, d, n)
-            print(f"Flag: {m.to_bytes((m.bit_length()+7)//8, 'big').decode()}")
-            break
+        q = (coeff_q1 + math.isqrt(delta)) // (2 * coeff_q2)
 
-solve()
+        for _ in range(20):
+            f_q = k*q**3 - coeff_q2*q**2 + coeff_q1*q - ne2
+            df_q = 3*k*q**2 - 2*coeff_q2*q + coeff_q1
+            if df_q == 0: break
+            step = f_q // df_q
+            q -= step
+            if step == 0: break
+        
+        for cand_q in range(q - 2, q + 3):
+            if cand_q > 1 and n % cand_q == 0:
+                p = n // cand_q
+                phi = (p-1)*(cand_q-1)
+                d = pow(e, -1, phi)
+                if p*e + cand_q*d == hint:
+                    m = pow(c, d, n)
+                    print(f"Flag: {m.to_bytes((m.bit_length()+7)//8, 'big').decode()}")
+                    return
+
+if __name__ == "__main__":
+    solve()
 ```
+<img width="513" height="59" alt="image" src="https://github.com/user-attachments/assets/fdf48675-e52e-47ed-b71b-d73bebfa9091" />
