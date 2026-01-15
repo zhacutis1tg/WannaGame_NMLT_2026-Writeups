@@ -1,6 +1,6 @@
 # Challenge: Just some Math
 ## Information
-<img width="1074" height="285" alt="image" src="https://github.com/user-attachments/assets/b620f49b-90ee-4dbe-a201-e16e52603bc6" />
+<img width="1072" height="333" alt="image" src="https://github.com/user-attachments/assets/c563adb5-7d9f-481a-9ef6-055447558599" />
 
 ## Solution
 Dựa vào file `chall.py`, ta có các thông tin sau:
