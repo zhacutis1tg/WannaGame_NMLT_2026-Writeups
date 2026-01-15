@@ -138,3 +138,5 @@ flag = unpad(cipher.decrypt(enc_flag), 16)
 print(f"Flag: {flag.decode()}")
 ```
 
+<img width="542" height="52" alt="image" src="https://github.com/user-attachments/assets/60ede5e1-a664-48e4-a21f-5b48e5b5bd7f" />
+
