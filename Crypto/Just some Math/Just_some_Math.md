@@ -3,12 +3,49 @@
 <img width="1074" height="285" alt="image" src="https://github.com/user-attachments/assets/b620f49b-90ee-4dbe-a201-e16e52603bc6" />
 
 ## Solution
-### Phân tích
 Dựa vào file `chall.py`, ta có các thông tin sau:
 - Flag được chuyển thành số nguyên `pt` với độ dài hơn 800 bits.
 - Hệ thống RSA sử dụng hai số nguyên tố $p,q$ (mỗi số 512 bits) và số mũ công khai $e$ (256 bits).
+- Lỗ hổng: In ra giá trị $i^e \pmod p$ với $i$ chạy từ 2 đến 6.
+Vì `pt` (800+ bits) lớn hơn `p` (512 bits), ta không thể lấy toàn bộ Flag chỉ bằng cách giải mã theo modulo $p$. Do đó cần thu thập dữ liệu từ ít nhất 2 - 3 lần chạy để dùng Định lý số dư Trung Hoa (CRT).  
 
+### Bước 1: Khôi phục số nguyên tố $p$
+Dựa trên các giá trị được cung cấp:
+- $R_2 = 2^e \pmod p$
+- $R_3 = 3^e \pmod p$
+- $R_4 = 4^e \pmod p$
+- $R_6 = 6^e \pmod p$
+  
+Ta có các tính chất toán học sau:
+- $4^e = (2^2)^e = (2^e)^2 \implies R_4 \equiv R_2^2 \pmod p$
+- $6^e = (2 \cdot 3)^e = 2^e \cdot 3^e \implies R_6 \equiv R_2 \cdot R_3 \pmod p$
+  
+Điều này đồng nghĩa với việc:
+- $$p \mid (R_2^2 - R_4)$$
+- $p \mid (R_2 \cdot R_3 - R_6)$
 
+Bằng cách tính Ước chung lớn nhất (GCD) của hai hiệu số trên, ta sẽ tìm được số nguyên tố $p$:
+
+$$p = \text{gcd}(|R_2^2 - R_4|, |R_2 \cdot R_3 - R_6|)$$
+
+### Bước 2: Giải mã từng phần Flag
+Sau khi có $p$, ta tính số mũ giải mã cục bộ $d_p$ (số nghịch đảo của $e$ theo modulo $\phi(p) = p-1$):
+
+$$d_p = e^{-1} \pmod{p-1}$$
+
+Giá trị Flag theo modulo $p$ là:
+
+$$mp = ct^{d_p} \pmod p$$
+
+### Bước 3: Hợp nhất bằng Định lý số dư Trung Hoa (CRT)
+Giả sử ta thực hiện 3 lần chạy, ta thu được 3 cặp dữ liệu: $(mp_1, p_1), (mp_2, p_2), (mp_3, p_3)$.  
+Sử dụng CRT để tìm số $X$ sao cho:
+
+$$\begin{cases} X \equiv mp_1 \pmod{p_1} \\ 
+X \equiv mp_2 \pmod{p_2} \\ 
+X \equiv mp_3 \pmod{p_3} \end{cases}$$
+
+Vì tích $p_1 \cdot p_2 \cdot p_3 \approx 1536$ bits, lớn hơn Flag (800+ bits), nên giá trị $X$ tìm được chính là Flag gốc.
 
 
 ```python
