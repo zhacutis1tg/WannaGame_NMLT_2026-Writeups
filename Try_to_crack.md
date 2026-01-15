@@ -1,10 +1,10 @@
-## Challenge: Try to crack
-### Information
+# Challenge: Try to crack
+## Information
 <img width="1120" height="330" alt="0" src="https://github.com/user-attachments/assets/5648dc3b-bb1b-4862-b2fa-30ed4a56955e" />
 
-### Solution
+## Solution
 Given the hint "Steg challenge", we suspect the flag is hidden within the provided image.  
-#### Step 1: Check for embedded content
+### Step 1: Check for embedded content
 First, we attempt to extract hidden data using `steghide`.
 Command:
 ```bash
@@ -15,7 +15,7 @@ steghide extract -sf chall.jpg
 
   
 The extraction failed because it requires a passphrase, which is currently unknown.  
-#### Step 2: Brute-force the passphrase
+### Step 2: Brute-force the passphrase
 We can attempt to crack the passphrase using the `rockyou.txt` wordlist.
 
 If `rockyou.txt` is not available locally, download it using:
@@ -30,7 +30,7 @@ stegseek chall.jpg rockyou.txt
   
 <img width="623" height="155" alt="image" src="https://github.com/user-attachments/assets/6d7f3d53-5c2b-4a61-a84f-db4366ce3118" />
 
-#### Step 3: Extract and analyze
+### Step 3: Extract and analyze
 Upon finding the correct passphrase, stegseek automatically extracts a file named `somethingforyou.zip`. Unzipping this archive reveals two files:
 - `part1.txt`: Contains the first part of the flag.  
 - `secret.png`: Suspected to contain the second part.  
